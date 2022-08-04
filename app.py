@@ -3,7 +3,7 @@ from flask import Flask, Response, jsonify, request
 
 
 # Routes
-from routes.auth.login import Login
+from routes.auth import Auth
 
 app = Flask(__name__)
 
@@ -14,14 +14,14 @@ def page_not_found(error):
 
 @app.route('/')
 def index():
-    return 'Hello World'
+    return 'Health up'
 
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
 
     # Routes
-    app.register_blueprint(Login.main, url_prefix='/auth')
+    app.register_blueprint(Auth.main, url_prefix='/auth')
 
     # Errors
     app.register_error_handler(404, page_not_found)
