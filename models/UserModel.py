@@ -1,27 +1,27 @@
-from multiprocessing import connection
+from flask import jsonify
 from database.db import get_connection
 from .entities.User import User
+from werkzeug.security import check_password_hash
 
 
 class UserModel():
 
     @classmethod
-    def login_user(self, email):
+    def login_user(self, email, password):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT fullName, document, email FROM public.user where email = %s """, (email,))
+                    """SELECT password FROM public.user where email = %s """, (email,))
                 result = cursor.fetchone()
 
-                user = None
-                if result != None:
-                    user = User(result[0], result[1], result[2], result[3], "")
-                    user = user.to_JSON()
+                response = jsonify(statusCode=401, message='Login failed, credentials incorrect'), 401
+                if result != None and check_password_hash(result[0], password):
+                    response = jsonify(statusCode=200, message='Login success'), 200
 
             connection.close()
-            return user
+            return response
         except Exception as ex:
             raise Exception(ex)
 

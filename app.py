@@ -1,5 +1,5 @@
 from config import config
-from flask import Flask, Response, jsonify, request
+from flask import Flask
 
 
 # Routes
