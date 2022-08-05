@@ -6,7 +6,7 @@ from models.entities.User import User
 # Models
 from models.UserModel import UserModel
 
-main = Blueprint('login_blueprint', __name__)
+main = Blueprint('auth_blueprint', __name__)
 
 
 @main.route('/login', methods=['POST'])

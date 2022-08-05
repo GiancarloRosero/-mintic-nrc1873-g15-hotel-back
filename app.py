@@ -9,7 +9,7 @@ from routes.auth import Auth
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = ['Content-Type']
 CORS(app)
-cors = CORS(app, resources= {r"*":{"origins":"*"}})
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 
 def page_not_found(error):
@@ -20,15 +20,16 @@ def page_not_found(error):
 def index():
     return 'Health up'
 
+# Routes
+app.register_blueprint(Auth.main, url_prefix='/auth')
+
+# Errors
+app.register_error_handler(404, page_not_found)
+
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
 
-    # Routes
-    app.register_blueprint(Auth.main, url_prefix='/auth')
-
-    # Errors
-    app.register_error_handler(404, page_not_found)
     app.run()
 
 
