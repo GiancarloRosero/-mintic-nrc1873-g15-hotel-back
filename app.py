@@ -1,11 +1,15 @@
 from config import config
 from flask import Flask
+from flask_cors import CORS, cross_origin
 
 
 # Routes
 from routes.auth import Auth
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = ['Content-Type']
+CORS(app)
+cors = CORS(app, resources= {r"*":{"origins":"*"}})
 
 
 def page_not_found(error):
