@@ -22,7 +22,7 @@ def login():
 @main.route('/register', methods=['POST'])
 def register():
     try:
-        fullName = request.json['fullName']
+        fullName = request.json['fullname']
         document = request.json['document']
         email = request.json['email']
         password = request.json['password']
