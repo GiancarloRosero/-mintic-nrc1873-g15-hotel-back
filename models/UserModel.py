@@ -16,9 +16,9 @@ class UserModel():
                     """SELECT password, id, rol_id FROM public.user where email = %s """, (email,))
                 result = cursor.fetchone()
 
-                response = jsonify(statusCode=401, message='Login failed, credentials incorrect'), 401
+                response = jsonify(status=401, message='Login failed, credentials incorrect'), 401
                 if result != None and check_password_hash(result[0], password):
-                    response = jsonify(statusCode=200, message='Login success', id=result[1], rol=result[2]), 200
+                    response = jsonify(status=200, message='Login success', id=result[1], rol=result[2]), 200
 
             connection.close()
             return response

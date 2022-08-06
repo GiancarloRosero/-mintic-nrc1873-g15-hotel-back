@@ -20,29 +20,26 @@ def add_room():
         descriptionShort = request.json['descriptionShort']
         descriptionLarge = request.json['descriptionLarge']
         price = request.json['price']
+        code = request.json['code']
 
-        room = Room(name, descriptionShort, descriptionLarge, price)
+        room = Room(name, descriptionShort, descriptionLarge, price, code)
 
         affected_rows = RoomModel.register(room)
 
         if affected_rows >= 1:
-            return jsonify(statusCode=200,
-                           data=room), 200
+            return jsonify(status=200,
+                           data=room.code), 200
         else:
-            return jsonify(statusCode=500, message='Failed to add room', method='add_room'), 500
+            return jsonify(status=500, message='Failed to add room', method='add_room'), 500
 
     except Exception as ex:
-        return jsonify(statusCode=500, message=str(ex), method='register'), 500
+        return jsonify(status=500, message=str(ex), method='add room'), 500
 
 
 @main.route('/add-images-room', methods=['POST'])
 def add_images_room():
     try:
         file = request.files['file']
-        name = request.form['name']
-        descriptionShort = request.form['descriptionShort']
-        descriptionLarge = request.form['descriptionLarge']
-        price = request.form['price']
         code = request.form['code']
 
         path_new = PATH_FILE.replace("\\", "/")
@@ -55,27 +52,25 @@ def add_images_room():
 
         file.save(path_save_image)
 
-        room = Room(name, descriptionShort, descriptionLarge, price, code)
+        """ return jsonify(status=200,
+                           data=path_save_image), 200 """
 
-        return jsonify(statusCode=200,
-                           data=path_save_image), 200
-
-        """ affected_rows = RoomModel.register(room)
+        affected_rows = RoomModel.add_images(code, path_save_image)
 
         if affected_rows >= 1:
-            return jsonify(statusCode=200,
-                           data=room), 200
+            return jsonify(status=200,
+                           data=path_save_image), 200
         else:
-            return jsonify(statusCode=500, message='Failed to add room', method='add_room'), 500 """
+            return jsonify(status=500, message='Failed to add room', method='add_room'), 500
 
     except Exception or OSError as ex:
         if ex.errno != errno.EEXIST:
             raise
-        return jsonify(statusCode=500, message=str(ex), method='register'), 500
+        return jsonify(status=500, message=str(ex), method='register'), 500
 
 
-@main.route('/get-image', methods=['GET'])
+@main.route('/get-image/file/<roomCode>', methods=['GET'])
 def get_image():
     path_new = PATH_FILE.replace("\\", "/")
-    return send_from_directory(path_new, path="/abcsplash.jpg", as_attachment=False)
+    return send_from_directory(path_new, path="abcf/splash.jpg", as_attachment=False)
 

@@ -16,7 +16,7 @@ def login():
         password = request.json['password']
         return UserModel.login_user(email, password)
     except Exception as ex:
-        return jsonify(statusCode=500, message=str(ex), method='login'), 500
+        return jsonify(status=500, message=str(ex), method='login'), 500
 
 
 @main.route('/register', methods=['POST'])
@@ -34,10 +34,10 @@ def register():
         affected_rows = UserModel.register_user(user)
 
         if affected_rows == 1:
-            return jsonify(statusCode=200,
+            return jsonify(status=200,
                            data=user.email), 200
         else:
-            return jsonify(statusCode=500, message='Failed to insert', method='register'), 500
+            return jsonify(status=500, message='Failed to insert', method='register'), 500
 
     except Exception as ex:
-        return jsonify(statusCode=500, message=str(ex), method='register'), 500
+        return jsonify(status=500, message=str(ex), method='register'), 500

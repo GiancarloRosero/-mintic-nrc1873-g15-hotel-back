@@ -42,7 +42,7 @@ def login():
 
     return jsonify(isError=False,
                    message="Success",
-                   statusCode=200,
+                   status=200,
                    data=data), 200
 
 

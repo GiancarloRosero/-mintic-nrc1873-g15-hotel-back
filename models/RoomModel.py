@@ -12,8 +12,8 @@ class RoomModel():
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """INSERT INTO public.room (name, descriptionShort, descriptionLarge, price, code)
-                    VALUES (%s, %s, %s, %s)""", (room.name, room.descriptionShort, room.descriptionLarge, room.price, room.code))
+                    """INSERT INTO public.room (name, description_short, description_large, price, code)
+                    VALUES (%s, %s, %s, %s, %s)""", (room.name, room.descriptionShort, room.descriptionLarge, room.price, room.code,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -23,7 +23,7 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
-    def add_images(self, code):
+    def add_images(self, code, path_save_image):
 
         try:
             connection = get_connection()
@@ -36,7 +36,7 @@ class RoomModel():
                 if result != None:
                     cursor.execute(
                     """INSERT INTO public.images_room (room_id, url)
-                    VALUES (%s, %s,)""", (result[0]))
+                    VALUES (%s, %s)""", (result[0], path_save_image,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
