@@ -52,7 +52,7 @@ def add_images_room():
             makedirs(path_new + code)
 
 
-        file.save(path_new + code)
+        file.save()
 
         room = Room(name, descriptionShort, descriptionLarge, price, code)
 
