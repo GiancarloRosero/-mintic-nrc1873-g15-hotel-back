@@ -74,7 +74,7 @@ def add_images_room():
 
 
 @main.route('/get-image', methods=['GET'])
-def add_images_room():
+def get_image():
     path_new = PATH_FILE.replace("\\", "/")
     return send_from_directory(path_new, path="/abcsplash.jpg", as_attachment=False)
 
