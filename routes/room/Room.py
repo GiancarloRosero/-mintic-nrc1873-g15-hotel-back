@@ -57,7 +57,7 @@ def add_images_room():
         room = Room(name, descriptionShort, descriptionLarge, price, code)
 
         return jsonify(statusCode=200,
-                           data=room), 200
+                           data=path_new + code + file.filename), 200
 
         """ affected_rows = RoomModel.register(room)
 
