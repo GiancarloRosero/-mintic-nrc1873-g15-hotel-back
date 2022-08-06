@@ -51,13 +51,14 @@ def add_images_room():
         if path.isdir(path_new + code) == False:
             makedirs(path_new + code)
 
+        path_save_image = path_new + code + "/" + file.filename
 
-        file.save(path_new + code + file.filename)
+        file.save(path_save_image)
 
         room = Room(name, descriptionShort, descriptionLarge, price, code)
 
         return jsonify(statusCode=200,
-                           data=path_new + code + file.filename), 200
+                           data=path_save_image), 200
 
         """ affected_rows = RoomModel.register(room)
 
