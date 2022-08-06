@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from os import getcwd, mkdir, path
+from os import getcwd, mkdir, path, makedirs
 import errno
 
 # Entities
@@ -49,7 +49,7 @@ def add_images_room():
         
 
         if path.isdir(path_new + code) == False:
-            mkdir(path_new + code)
+            makedirs(path_new + code)
 
 
         file.save(path_new + code)
