@@ -51,12 +51,12 @@ class RoomModel():
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT url FROM public.room r
+                    """SELECT url, mimetype FROM public.room r
                     JOIN public.images_room ir ON r.id = ir.room_id
                     WHERE r.code = %s """, (code,))
                 result = cursor.fetchall()
 
             connection.close()
-            return jsonify(status=200, message='Get url images success', data=result), 200
+            return result
         except Exception as ex:
             raise Exception(ex)

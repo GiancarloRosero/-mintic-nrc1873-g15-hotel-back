@@ -12,6 +12,10 @@ app.config['CORS_HEADERS'] = ['Content-Type']
 CORS(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
+UPLOADED_FOLDER = 'static/files/'
+
+app.config['UPLOADED_FOLDER'] = UPLOADED_FOLDER
+
 
 def page_not_found(error):
     return "<h1>Not found page </h1>", 404
