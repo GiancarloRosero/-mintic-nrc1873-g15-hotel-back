@@ -13,6 +13,7 @@ from models.RoomModel import RoomModel
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'png', 'bmp'])
 
 PATH_FILE = path.abspath(path.dirname(__file__))
+PATH_FILE_NEW = PATH_FILE.replace("\\", "/")
 
 
 main = Blueprint('room_blueprint', __name__)
@@ -54,21 +55,14 @@ def add_images_room():
         if not allowed_file(file.filename):
             return jsonify(status=500, message='Extension image invalid', method='add_room'), 500
 
-        path_new = PATH_FILE.replace("\\", "/")
+        if path.isdir(PATH_FILE_NEW + "/" + current_app.config['UPLOADED_FOLDER']+"/"+code) == False:
+            makedirs(PATH_FILE_NEW+"/"+current_app.config['UPLOADED_FOLDER']+"/"+code)
 
-        if path.isdir(path_new + "/" + current_app.config['UPLOADED_FOLDER']+"/"+code) == False:
-            makedirs(path_new+"/"+current_app.config['UPLOADED_FOLDER']+"/"+code)
-
-        path_save_image = path_new + "/" + \
+        path_save_image = PATH_FILE_NEW + "/" + \
             current_app.config['UPLOADED_FOLDER']+code+"/" + file.filename
 
         file.save(path.join(
-            path_new, current_app.config['UPLOADED_FOLDER']+code+"/", file.filename))
-
-        """ file.save(path.join(current_app.config['UPLOADED_FOLDER'], file.filename)) """
-
-        """ return jsonify(status=200,
-                           data=path_save_image), 200 """
+            PATH_FILE_NEW, current_app.config['UPLOADED_FOLDER']+code+"/", file.filename))
 
         affected_rows = RoomModel.add_images(
             code, code + "/" + file.filename, file.mimetype)
@@ -86,30 +80,14 @@ def add_images_room():
 
 @main.route('/get-all-images/files/<roomCode>', methods=['GET'])
 def get_all_names_images(roomCode):
-    valor = []
-    path_new = PATH_FILE.replace("\\", "/")
+    urlImagesRoom = []
     for path_img in RoomModel.get_all_names_images(roomCode):
-        valor.append(path_img)
+        urlImagesRoom.append(path_img[0])
 
-        """ valor.append(send_from_directory(path_new, path=path_img[0], as_attachment=True)) """
-        """ RoomModel.get_all_names_images(roomCode) """
-        """"
-        with open(path_new+roomCode+path_img, encoding='utf8') as f_obj:
-            contents = f_obj.read()
-            print(contents
-            valor.append(contents) """
-    print(valor[0][0])
-    print(valor[0][1])
-    return url_for('static', filename=valor[0][0])
-    """ return send_from_directory(path_new, path="path_img[0]", as_attachment=False) """
-
-    """ return jsonify(status=200, message='Get url images success', data=valor), 200 """
+    return jsonify(status=200, message='Get url images success', data=urlImagesRoom), 200
 
 
-@main.route('/get-all-images/fiiles/<roomCode>', methods=['GET'])
-def get_all_images(roomCode):
-    path_new = PATH_FILE.replace("\\", "/")
-    imageList = listdir('files/'+roomCode)
-    imageList = [path_new+roomCode+image for image in imageList]
-    """ return send_from_directory(path_new, path="abcf/splash.jpg", as_attachment=False) """
-    """ return jsonify(status=200, data=imageList), 200 """
+@main.route('/get-image/<roomCode>/<image>', methods=['GET'])
+def get_all_images(roomCode, image):
+    print(roomCode)
+    return send_from_directory(PATH_FILE_NEW+"/"+current_app.config['UPLOADED_FOLDER'], path=roomCode + "/"+image, as_attachment=False)

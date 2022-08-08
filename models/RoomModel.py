@@ -51,7 +51,7 @@ class RoomModel():
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT url, mimetype FROM public.room r
+                    """SELECT url FROM public.room r
                     JOIN public.images_room ir ON r.id = ir.room_id
                     WHERE r.code = %s """, (code,))
                 result = cursor.fetchall()
