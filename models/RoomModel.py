@@ -35,7 +35,7 @@ class RoomModel():
 
                 if result != None:
                     cursor.execute(
-                    """INSERT INTO public.images_room (room_id, url)
+                        """INSERT INTO public.images_room (room_id, url)
                     VALUES (%s, %s)""", (result[0], path_save_image,))
                 affected_rows = cursor.rowcount
                 connection.commit()

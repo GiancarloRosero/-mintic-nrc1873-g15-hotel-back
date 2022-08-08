@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from os import getcwd, mkdir, path, makedirs
+from os import getcwd, listdir, mkdir, path, makedirs
 import errno
 
 # Entities
@@ -8,9 +8,14 @@ from models.entities.Room import Room
 from models.RoomModel import RoomModel
 
 
+ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','png','bmp'])
+
 PATH_FILE = getcwd() + "/files/"
 
 main = Blueprint('room_blueprint', __name__)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @main.route('/add-room', methods=['POST'])
@@ -42,6 +47,9 @@ def add_images_room():
         file = request.files['file']
         code = request.form['code']
 
+        if not allowed_file(file.filename):
+            return jsonify(status=500, message='Extension image invalid', method='add_room'), 500
+
         path_new = PATH_FILE.replace("\\", "/")
         
 
@@ -58,8 +66,7 @@ def add_images_room():
         affected_rows = RoomModel.add_images(code, path_save_image)
 
         if affected_rows >= 1:
-            return jsonify(status=200,
-                           data=path_save_image), 200
+            return jsonify(status=200, data=path_save_image), 200
         else:
             return jsonify(status=500, message='Failed to add room', method='add_room'), 500
 
@@ -69,8 +76,10 @@ def add_images_room():
         return jsonify(status=500, message=str(ex), method='register'), 500
 
 
-@main.route('/get-image/file/<roomCode>', methods=['GET'])
-def get_image():
+@main.route('/get-all-images/files/<roomCode>', methods=['GET'])
+def get_all_images(roomCode):
     path_new = PATH_FILE.replace("\\", "/")
-    return send_from_directory(path_new, path="abcf/splash.jpg", as_attachment=False)
+    imageList = listdir('files/'+roomCode)
+    imageList = [path_new+roomCode+image for image in imageList]
+    return jsonify(status=200, data=imageList), 200
 
