@@ -23,8 +23,7 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
-    def add_images(self, code, path_save_image):
-
+    def add_images(self, code, path_save_image, mimetype):
         try:
             connection = get_connection()
 
@@ -35,12 +34,29 @@ class RoomModel():
 
                 if result != None:
                     cursor.execute(
-                        """INSERT INTO public.images_room (room_id, url)
-                    VALUES (%s, %s)""", (result[0], path_save_image,))
+                        """INSERT INTO public.images_room (room_id, url, mimetype)
+                    VALUES (%s, %s, %s)""", (result[0], path_save_image, mimetype,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
             connection.close()
             return affected_rows
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_all_names_images(self, code):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT url FROM public.room r
+                    JOIN public.images_room ir ON r.id = ir.room_id
+                    WHERE r.code = %s """, (code,))
+                result = cursor.fetchall()
+
+            connection.close()
+            return jsonify(status=200, message='Get url images success', data=result), 200
         except Exception as ex:
             raise Exception(ex)

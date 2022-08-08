@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, send_from_directory
+from flask import Blueprint, jsonify, request, send_from_directory, Response
 from os import getcwd, listdir, mkdir, path, makedirs
 import errno
 
@@ -63,7 +63,7 @@ def add_images_room():
         """ return jsonify(status=200,
                            data=path_save_image), 200 """
 
-        affected_rows = RoomModel.add_images(code, path_save_image)
+        affected_rows = RoomModel.add_images(code, path_save_image, file.mimetype)
 
         if affected_rows >= 1:
             return jsonify(status=200, data=path_save_image), 200
@@ -73,13 +73,18 @@ def add_images_room():
     except Exception or OSError as ex:
         if ex.errno != errno.EEXIST:
             raise
-        return jsonify(status=500, message=str(ex), method='register'), 500
-
+        return jsonify(status=500, message=str(ex), method='add-images-room'), 500
 
 @main.route('/get-all-images/files/<roomCode>', methods=['GET'])
+def get_all_names_images(roomCode):
+    return RoomModel.get_all_names_images(roomCode)
+
+
+@main.route('/get-all-images/fiiles/<roomCode>', methods=['GET'])
 def get_all_images(roomCode):
     path_new = PATH_FILE.replace("\\", "/")
-    imageList = listdir('/'+roomCode)
+    imageList = listdir('files/'+roomCode)
     imageList = [path_new+roomCode+image for image in imageList]
-    return jsonify(status=200, data=imageList), 200
+    """ return send_from_directory(path_new, path="abcf/splash.jpg", as_attachment=False) """
+    """ return jsonify(status=200, data=imageList), 200 """
 
