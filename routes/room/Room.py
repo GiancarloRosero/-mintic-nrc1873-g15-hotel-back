@@ -79,7 +79,7 @@ def add_images_room():
 @main.route('/get-all-images/files/<roomCode>', methods=['GET'])
 def get_all_images(roomCode):
     path_new = PATH_FILE.replace("\\", "/")
-    imageList = listdir('app/files/'+roomCode)
+    imageList = listdir('/app/files/'+roomCode)
     imageList = [path_new+roomCode+image for image in imageList]
     return jsonify(status=200, data=imageList), 200
 
