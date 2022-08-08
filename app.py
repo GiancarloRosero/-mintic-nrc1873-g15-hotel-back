@@ -26,7 +26,7 @@ app.register_blueprint(Auth.main, url_prefix='/auth')
 app.register_blueprint(Room.main, url_prefix='/room')
 
 # Errors
-app.register_error_handler(404, page_not_found)
+""" app.register_error_handler(404, page_not_found) """
 
 
 if __name__ == '__main__':
