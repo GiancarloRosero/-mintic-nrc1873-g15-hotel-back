@@ -32,7 +32,7 @@ def add_room():
         price = request.json['price']
         code = request.json['code']
 
-        room = Room(name, descriptionShort, descriptionLarge, price, code)
+        room = Room(name, descriptionShort, descriptionLarge, price, code, 5)
 
         affected_rows = RoomModel.register(room)
 
