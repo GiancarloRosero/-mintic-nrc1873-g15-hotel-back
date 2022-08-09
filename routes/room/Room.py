@@ -93,3 +93,7 @@ def get_all_images(roomCode, image):
 @main.route('/get-all-rooms', methods=['GET'])
 def get_all_rooms():
     return jsonify(status=200, message='Get rooms success', data=RoomModel.get_all_rooms()), 200
+
+@main.route('/get-room_detail/<roomCode>', methods=['GET'])
+def get_room_detail(roomCode):
+    return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200

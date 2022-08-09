@@ -82,3 +82,21 @@ class RoomModel():
             return rooms
         except Exception as ex:
             raise Exception(ex)
+
+    @classmethod
+    def get_room_detail(self, codeRoom):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT name, description_short, description_large,
+                    price, code, score FROM public.room WHERE code = %s """, (codeRoom,))
+                result = cursor.fetchone()
+                
+                room = Room(result[0], result[1], result[2], result[3], result[4], result[5]).to_JSON()
+
+            connection.close()
+            return room
+        except Exception as ex:
+            raise Exception(ex)
