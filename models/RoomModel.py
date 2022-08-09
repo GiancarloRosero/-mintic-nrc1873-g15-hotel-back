@@ -1,6 +1,7 @@
 from flask import jsonify
 from database.db import get_connection
 from .entities.Room import Room, RoomJoin
+from .entities.Comment import CommentJoinUser
 
 
 class RoomModel():
@@ -126,15 +127,19 @@ class RoomModel():
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT name, description_short, description_large,
-                    price, code, score FROM public.room WHERE code = %s """, (codeRoom,))
+                    """SELECT user_id, room_code, score, comment, u.fullname
+                    FROM public.comment c
+                    JOIN public.user u ON u.id = c.user_id
+                    WHERE room_code = %s """, (codeRoom,))
 
                 result = cursor.fetchall()
 
-                room = Room(result[0], result[1], result[2],
-                            result[3], result[4], result[5]).to_JSON()
+                comments = []
+                for comment in result:
+                    comments.append(
+                        CommentJoinUser(comment[0], comment[1], comment[2], comment[3], comment[4]).to_JSON())
 
-            connection.close()
-            return room
+                connection.close()
+                return comments
         except Exception as ex:
             raise Exception(ex)
