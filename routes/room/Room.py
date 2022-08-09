@@ -107,9 +107,9 @@ def get_room_detail(roomCode):
 def can_add_comment(userId, roomCode):
     result = RoomModel.can_add_comment(userId, roomCode)
     if len(result) > 0 :
-        return jsonify(status=406, message='Can not add comments', data=result[0]), 200
+        return jsonify(status=200, message='You can add comments', data=result[0]), 200
     else:
-        return jsonify(status=200, message='You can add comments', data=result), 200
+        return jsonify(status=406, message='Can not add comments', data=result), 200
 
 @main.route('/add-room-comment', methods=['POST'])
 def add_room_comment():

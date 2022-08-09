@@ -113,8 +113,8 @@ class RoomModel():
                 cursor.execute(
                     """SELECT r.id
                     FROM public.reserve r
-                    JOIN public.comment c ON c.room_code = r.room_code
-                    WHERE r.user_id = %s AND r.room_code = %s AND r.end_date < CURRENT_DATE """, (userId, codeRoom,))
+                    WHERE r.user_id = %s AND r.room_code = %s
+                    AND CURRENT_DATE > r.end_date """, (userId, codeRoom,))
                 result = cursor.fetchall()
 
             connection.close()
