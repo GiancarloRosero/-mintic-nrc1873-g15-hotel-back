@@ -94,6 +94,14 @@ def get_all_images(roomCode, image):
 def get_all_rooms():
     return jsonify(status=200, message='Get rooms success', data=RoomModel.get_all_rooms()), 200
 
-@main.route('/get-room_detail/<roomCode>', methods=['GET'])
+@main.route('/get-room-detail/<roomCode>', methods=['GET'])
 def get_room_detail(roomCode):
     return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200
+
+@main.route('/add-room-comment/<roomCode>', methods=['GET'])
+def add_room_comment(roomCode):
+    return jsonify(status=200, message='Get comments room success', data=RoomModel.add_room_comment(roomCode)), 200
+
+@main.route('/get-room-comments/<roomCode>', methods=['GET'])
+def get_room_comments(roomCode):
+    return jsonify(status=200, message='Get comments room success', data=RoomModel.get_room_comments(roomCode)), 200
