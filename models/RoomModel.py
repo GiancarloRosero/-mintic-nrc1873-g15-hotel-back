@@ -1,6 +1,6 @@
 from flask import jsonify
 from database.db import get_connection
-from werkzeug.security import check_password_hash
+from .entities.Room import Room, RoomJoin
 
 
 class RoomModel():
@@ -58,5 +58,27 @@ class RoomModel():
 
             connection.close()
             return result
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_all_rooms(self):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT DISTINCT ON (name) name, description_short, description_large,
+                    price, code, score, ir.url FROM public.room r JOIN public.images_room ir
+                    ON ir.room_id = r.id """)
+                result = cursor.fetchall()
+
+            rooms = []
+            for room in result:
+                rooms.append(
+                    RoomJoin(room[0], room[1], room[2], room[3], room[4], room[5], room[6]).to_JSON())
+
+            connection.close()
+            return rooms
         except Exception as ex:
             raise Exception(ex)

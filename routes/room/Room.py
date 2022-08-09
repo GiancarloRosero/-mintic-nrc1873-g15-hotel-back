@@ -1,8 +1,6 @@
-from fileinput import filename
-from flask import Blueprint, jsonify, request, send_from_directory, Response, send_file, url_for, current_app
-from os import getcwd, listdir, mkdir, path, makedirs
+from flask import Blueprint, jsonify, request, send_from_directory, current_app
+from os import path, makedirs
 import errno
-import io
 
 # Entities
 from models.entities.Room import Room
@@ -89,5 +87,9 @@ def get_all_names_images(roomCode):
 
 @main.route('/get-image/<roomCode>/<image>', methods=['GET'])
 def get_all_images(roomCode, image):
-    print(roomCode)
     return send_from_directory(PATH_FILE_NEW+"/"+current_app.config['UPLOADED_FOLDER'], path=roomCode + "/"+image, as_attachment=False)
+
+
+@main.route('/get-all-rooms', methods=['GET'])
+def get_all_rooms():
+    return jsonify(status=200, message='Get rooms success', data=RoomModel.get_all_rooms()), 200
