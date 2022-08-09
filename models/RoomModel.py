@@ -1,3 +1,4 @@
+from multiprocessing import connection
 from flask import jsonify
 from database.db import get_connection
 from .entities.Room import Room, RoomJoin
@@ -104,6 +105,24 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
+    def can_add_comment(self, userId, codeRoom):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT r.id
+                    FROM public.reserve r
+                    JOIN public.comment c ON c.room_code = r.room_code
+                    WHERE r.user_id = %s AND r.room_code = %s AND r.end_date < CURRENT_DATE """, (userId, codeRoom,))
+                result = cursor.fetchall()
+
+            connection.close()
+            return result
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def add_room_comment(self, comment):
         try:
             connection = get_connection()
@@ -127,7 +146,7 @@ class RoomModel():
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT user_id, room_code, score, comment, u.fullname
+                    """SELECT c.id, user_id, room_code, score, comment, u.fullname
                     FROM public.comment c
                     JOIN public.user u ON u.id = c.user_id
                     WHERE room_code = %s """, (codeRoom,))
@@ -137,7 +156,7 @@ class RoomModel():
                 comments = []
                 for comment in result:
                     comments.append(
-                        CommentJoinUser(comment[0], comment[1], comment[2], comment[3], comment[4]).to_JSON())
+                        CommentJoinUser(comment[0], comment[1], comment[2], comment[3], comment[4], comment[5]).to_JSON())
 
                 connection.close()
                 return comments

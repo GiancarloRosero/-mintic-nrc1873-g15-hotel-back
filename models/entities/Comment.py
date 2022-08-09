@@ -14,7 +14,8 @@ class Comment():
         }
 
 class CommentJoinUser():
-    def __init__(self, userId, roomCode, score, comment, userFullName) -> None:
+    def __init__(self, id, userId, roomCode, score, comment, userFullName) -> None:
+        self.id = id
         self.userId = userId
         self.roomCode = roomCode
         self.score = score
@@ -23,6 +24,7 @@ class CommentJoinUser():
 
     def to_JSON(self):
         return {
+            'id': self.id,
             'userId': self.userId,
             'roomCode': self.roomCode,
             'score': self.score,

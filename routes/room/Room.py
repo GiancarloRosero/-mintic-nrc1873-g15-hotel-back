@@ -103,6 +103,14 @@ def get_room_detail(roomCode):
     return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200
 
 
+@main.route('/can-add-comment/<userId>/<roomCode>', methods=['GET'])
+def can_add_comment(userId, roomCode):
+    result = RoomModel.can_add_comment(userId, roomCode)
+    if len(result) > 0 :
+        return jsonify(status=406, message='Can not add comments', data=result[0]), 200
+    else:
+        return jsonify(status=200, message='You can add comments', data=result), 200
+
 @main.route('/add-room-comment', methods=['POST'])
 def add_room_comment():
     try:
@@ -144,7 +152,7 @@ def reserve():
         if affected_rows == 1:
             return jsonify(status=200, data=reserve.userId), 200
         elif affected_rows == 0:
-            return jsonify(status=406, message='Not available', method='reserve'), 406
+            return jsonify(status=406, message='Not available', method='reserve'), 200
         else:
             return jsonify(status=500, message='Failed to reserve', method='reserve'), 500
 

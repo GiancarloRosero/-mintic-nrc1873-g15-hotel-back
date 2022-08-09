@@ -39,18 +39,3 @@ if __name__ == '__main__':
     app.config.from_object(config['development'])
 
     app.run()
-
-
-""" @app.route('/login', methods=['POST'])
-def login():
-    email = request.json['email']
-    data = request.json
-
-    return jsonify(isError=False,
-                   message="Success",
-                   status=200,
-                   data=data), 200
-
-
-app.run(debug=True, port=5000)
- """
