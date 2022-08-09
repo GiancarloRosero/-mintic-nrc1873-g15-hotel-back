@@ -4,6 +4,7 @@ import errno
 
 # Entities
 from models.entities.Room import Room
+from models.entities.Comment import Comment
 # Models
 from models.RoomModel import RoomModel
 
@@ -41,7 +42,7 @@ def add_room():
             return jsonify(status=500, message='Failed to add room', method='add_room'), 500
 
     except Exception as ex:
-        return jsonify(status=500, message=str(ex), method='add room'), 500
+        return jsonify(status=500, message=str(ex), method='add-room'), 500
 
 
 @main.route('/add-images-room', methods=['POST'])
@@ -54,7 +55,8 @@ def add_images_room():
             return jsonify(status=500, message='Extension image invalid', method='add_room'), 500
 
         if path.isdir(PATH_FILE_NEW + "/" + current_app.config['UPLOADED_FOLDER']+"/"+code) == False:
-            makedirs(PATH_FILE_NEW+"/"+current_app.config['UPLOADED_FOLDER']+"/"+code)
+            makedirs(PATH_FILE_NEW+"/" +
+                     current_app.config['UPLOADED_FOLDER']+"/"+code)
 
         path_save_image = PATH_FILE_NEW + "/" + \
             current_app.config['UPLOADED_FOLDER']+code+"/" + file.filename
@@ -94,13 +96,32 @@ def get_all_images(roomCode, image):
 def get_all_rooms():
     return jsonify(status=200, message='Get rooms success', data=RoomModel.get_all_rooms()), 200
 
+
 @main.route('/get-room-detail/<roomCode>', methods=['GET'])
 def get_room_detail(roomCode):
     return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200
 
-@main.route('/add-room-comment/<roomCode>', methods=['GET'])
-def add_room_comment(roomCode):
-    return jsonify(status=200, message='Get comments room success', data=RoomModel.add_room_comment(roomCode)), 200
+
+@main.route('/add-room-comment', methods=['POST'])
+def add_room_comment():
+    try:
+        userId = request.json['userId']
+        roomCode = request.json['roomCode']
+        score = request.json['score']
+        comment = request.json['comment']
+
+        comment = Comment(userId, roomCode, score, comment)
+
+        affected_rows = RoomModel.add_room_comment(comment)
+
+        if affected_rows == 1:
+            return jsonify(status=200, data=comment.userId), 200
+        else:
+            return jsonify(status=500, message='Failed to add comment', method='add_room_comment'), 500
+
+    except Exception as ex:
+        return jsonify(status=500, message=str(ex), method='add-room-comment'), 500
+
 
 @main.route('/get-room-comments/<roomCode>', methods=['GET'])
 def get_room_comments(roomCode):

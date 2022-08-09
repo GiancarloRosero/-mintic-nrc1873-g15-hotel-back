@@ -93,11 +93,29 @@ class RoomModel():
                     """SELECT name, description_short, description_large,
                     price, code, score FROM public.room WHERE code = %s """, (codeRoom,))
                 result = cursor.fetchone()
-                
-                room = Room(result[0], result[1], result[2], result[3], result[4], result[5]).to_JSON()
+
+                room = Room(result[0], result[1], result[2],
+                            result[3], result[4], result[5]).to_JSON()
 
             connection.close()
             return room
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def add_room_comment(self, comment):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """INSERT INTO public.comment (user_id, room_code, score, comment)
+                    VALUES (%s, %s, %s, %s)""", (comment.userId, comment.roomCode, comment.score, comment.comment,))
+                affected_rows = cursor.rowcount
+                connection.commit()
+
+            connection.close()
+            return affected_rows
         except Exception as ex:
             raise Exception(ex)
 
@@ -110,9 +128,11 @@ class RoomModel():
                 cursor.execute(
                     """SELECT name, description_short, description_large,
                     price, code, score FROM public.room WHERE code = %s """, (codeRoom,))
-                result = cursor.fetchone()
-                
-                room = Room(result[0], result[1], result[2], result[3], result[4], result[5]).to_JSON()
+
+                result = cursor.fetchall()
+
+                room = Room(result[0], result[1], result[2],
+                            result[3], result[4], result[5]).to_JSON()
 
             connection.close()
             return room
