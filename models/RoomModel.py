@@ -143,3 +143,32 @@ class RoomModel():
                 return comments
         except Exception as ex:
             raise Exception(ex)
+
+    @classmethod
+    def reserve(self, reserve):
+        try:
+            connection = get_connection()
+            
+            affected_rows = 0
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT room_code
+                    FROM public.reserve r
+                    WHERE
+                    (%s BETWEEN r.start_date and r.start_date )
+                    OR
+                    (%s BETWEEN r.start_date and r.end_date ) """, (reserve.startDate, reserve.endDate,))
+                result = cursor.fetchone()
+
+                if result == None:
+                    cursor.execute(
+                        """INSERT INTO public.reserve (user_id, room_code, start_date, end_date)
+                        VALUES (%s, %s, %s, %s)""", (reserve.userId, reserve.roomCode, reserve.startDate, reserve.endDate,))
+                    affected_rows = cursor.rowcount
+                    connection.commit()
+
+            connection.close()
+            return affected_rows
+        except Exception as ex:
+            raise Exception(ex)

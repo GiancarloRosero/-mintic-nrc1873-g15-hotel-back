@@ -5,6 +5,7 @@ import errno
 # Entities
 from models.entities.Room import Room
 from models.entities.Comment import Comment
+from models.entities.Reserve import Reserve
 # Models
 from models.RoomModel import RoomModel
 
@@ -126,3 +127,26 @@ def add_room_comment():
 @main.route('/get-room-comments/<roomCode>', methods=['GET'])
 def get_room_comments(roomCode):
     return jsonify(status=200, message='Get comments room success', data=RoomModel.get_room_comments(roomCode)), 200
+
+
+@main.route('/reserve', methods=['POST'])
+def reserve():
+    try:
+        userId = request.json['userId']
+        roomCode = request.json['roomCode']
+        startDate = request.json['startDate']
+        endDate = request.json['endDate']
+
+        reserve = Reserve(userId, roomCode, startDate, endDate)
+
+        affected_rows = RoomModel.reserve(reserve)
+
+        if affected_rows == 1:
+            return jsonify(status=200, data=reserve.userId), 200
+        elif affected_rows == 0:
+            return jsonify(status=406, message='Not available', method='reserve'), 406
+        else:
+            return jsonify(status=500, message='Failed to reserve', method='reserve'), 500
+
+    except Exception as ex:
+        return jsonify(status=500, message=str(ex), method='reserve'), 500
