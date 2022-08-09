@@ -46,13 +46,36 @@ class UserModel():
             raise Exception(ex)
 
     @classmethod
-    def get_all_users(self):
+    def get_all_users_from_admin(self):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """SELECT u.id, u.fullname, u.document, u.email, r.name FROM public.user u INNER JOIN public.rol r ON u.rol_id = r.id""")
+                    """SELECT u.id, u.fullname, u.document, u.email, r.name FROM public.user u
+                    INNER JOIN public.rol r ON u.rol_id = r.id
+                    WHERE u.rol_id = 1 """)
+                result = cursor.fetchall()
+
+            users = []
+            for user in result:
+                users.append(
+                    userJoin(user[0], user[1], user[2], user[3], user[4]).to_JSON())
+
+            connection.close()
+            return users
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_all_users_from_superadmin(self):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT u.id, u.fullname, u.document, u.email, r.name FROM public.user u
+                    INNER JOIN public.rol r ON u.rol_id = r.id """)
                 result = cursor.fetchall()
 
             users = []
