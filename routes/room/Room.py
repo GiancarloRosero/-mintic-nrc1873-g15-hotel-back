@@ -98,6 +98,11 @@ def get_all_rooms():
     return jsonify(status=200, message='Get rooms success', data=RoomModel.get_all_rooms()), 200
 
 
+@main.route('/get-all-rooms-between', methods=['GET'])
+def get_all_rooms_between():
+    return jsonify(status=200, message='Get rooms between success', data=RoomModel.get_all_rooms_between(request.headers['startDate'], request.headers['endDate'])), 200
+
+
 @main.route('/get-room-detail/<roomCode>', methods=['GET'])
 def get_room_detail(roomCode):
     return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200
@@ -106,10 +111,11 @@ def get_room_detail(roomCode):
 @main.route('/can-add-comment/<userId>/<roomCode>', methods=['GET'])
 def can_add_comment(userId, roomCode):
     result = RoomModel.can_add_comment(userId, roomCode)
-    if len(result) > 0 :
+    if len(result) > 0:
         return jsonify(status=200, message='You can add comments', data=result[0]), 200
     else:
         return jsonify(status=406, message='Can not add comments', data=result), 200
+
 
 @main.route('/add-room-comment', methods=['POST'])
 def add_room_comment():

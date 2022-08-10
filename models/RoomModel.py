@@ -86,6 +86,32 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
+    def get_all_rooms_between(self, startDate, endDate):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT r.name, r.description_short, r.description_large,
+                    r.price, r.code, r.score FROM public.room r left JOIN public.reserve re
+                    ON re.room_code = r.code 
+                    WHERE
+                    ( %s NOT BETWEEN re.start_date AND re.end_date)
+                    OR
+                    ( %s NOT BETWEEN re.start_date AND re.end_date) """, (startDate, endDate,))
+                result = cursor.fetchall()
+
+            rooms = []
+            for room in result:
+                rooms.append(
+                    Room(room[0], room[1], room[2], room[3], room[4], room[5]).to_JSON())
+
+            connection.close()
+            return rooms
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def get_room_detail(self, codeRoom):
         try:
             connection = get_connection()
