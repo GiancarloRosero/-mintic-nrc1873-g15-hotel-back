@@ -100,6 +100,11 @@ class RoomModel():
                     OR
                     ( %s NOT BETWEEN re.start_date AND re.end_date) """, (startDate, endDate,))
                 result = cursor.fetchall()
+                if len(result) == 0:
+                    cursor.execute(
+                        """SELECT r.name, r.description_short, r.description_large,
+                    r.price, r.code, r.score FROM public.room r """, (startDate, endDate,))
+                result = cursor.fetchall()
 
             rooms = []
             for room in result:
