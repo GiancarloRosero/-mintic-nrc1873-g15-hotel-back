@@ -136,6 +136,23 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
+    def delete_room(self, roomCode):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """DELETE FROM public.room WHERE code = %s """,
+                    (roomCode,))
+                affected_rows = cursor.rowcount
+                connection.commit()
+
+            connection.close()
+            return affected_rows
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def can_add_comment(self, userId, codeRoom):
         try:
             connection = get_connection()

@@ -108,6 +108,22 @@ def get_room_detail(roomCode):
     return jsonify(status=200, message='Get detail room success', data=RoomModel.get_room_detail(roomCode)), 200
 
 
+@main.route('/delete-room', methods=['POST'])
+def delete_room():
+    try:
+        roomCode = request.json['roomCode']
+
+        affected_rows = RoomModel.delete_room(roomCode)
+
+        if affected_rows == 1:
+            return jsonify(status=200, data=roomCode), 200
+        else:
+            return jsonify(status=500, message='Failed to delete room', method='delete_room'), 500
+
+    except Exception as ex:
+        return jsonify(status=500, message=str(ex), method='delete-room'), 500
+
+
 @main.route('/can-add-comment/<userId>/<roomCode>', methods=['GET'])
 def can_add_comment(userId, roomCode):
     result = RoomModel.can_add_comment(userId, roomCode)
