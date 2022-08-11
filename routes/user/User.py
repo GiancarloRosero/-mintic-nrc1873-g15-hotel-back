@@ -32,3 +32,21 @@ def get_all_users_from_admin():
 @main.route('/get-all-users-from-superadmin', methods=['GET'])
 def get_all_users_from_superadmin():
     return jsonify(status=200, message='Get users success superadmin', data=UserModel.get_all_users_from_superadmin()), 200
+
+
+@main.route('/update-user', methods=['POST'])
+def update_user():
+    try:
+        fullname = request.json['fullName']
+        email = request.json['email']
+        id = int(request.json['id'])
+
+        affected_rows = UserModel.update_user(fullname, email, id)
+
+        if affected_rows == 1:
+            return jsonify(status=200, data=id, message='Updated user successfully'), 200
+        else:
+            return jsonify(status=500, message='Failed to update user', method='update_user'), 500
+
+    except Exception as ex:
+        return jsonify(status=500, message=str(ex), method='update-user'), 500
