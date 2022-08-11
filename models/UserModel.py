@@ -99,8 +99,22 @@ class UserModel():
             for user in result:
                 users.append(
                     userJoin(user[0], user[1], user[2], user[3], user[4]).to_JSON())
-
             connection.close()
             return users
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def update_user(self, fullName, email, id):
+        try:
+            connection = get_connection()
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """update "user" set fullname = %s, email = %s where id=%s""",
+                    (fullName, email, id))
+                affected_rows = cursor.rowcount
+                connection.commit()
+            connection.close()
+            return affected_rows
         except Exception as ex:
             raise Exception(ex)
