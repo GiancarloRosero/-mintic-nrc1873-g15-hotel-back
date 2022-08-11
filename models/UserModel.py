@@ -1,11 +1,31 @@
 from flask import jsonify
 from database.db import get_connection
-from .entities.User import User
-from .entities.User import userJoin
+from .entities.User import userJoin, UserEdit
 from werkzeug.security import check_password_hash
 
 
 class UserModel():
+
+    @classmethod
+    def get_user(self, id):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT id, fullname, email FROM public.user where id = %s """, (id,))
+                result = cursor.fetchone()
+
+                response = jsonify(
+                    status=401, message='User not found'), 401
+                if result != None:
+                    response = UserEdit(
+                        result[0], result[1], result[2]).to_JSON()
+
+            connection.close()
+            return response
+        except Exception as ex:
+            raise Exception(ex)
 
     @classmethod
     def login_user(self, email, password):
@@ -110,8 +130,8 @@ class UserModel():
             connection = get_connection()
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """update "user" set fullname = %s, email = %s where id=%s""",
-                    (fullName, email, id))
+                    """update public.user set fullname = %s, email = %s where id=%s """,
+                    (fullName, email, id, ))
                 affected_rows = cursor.rowcount
                 connection.commit()
             connection.close()

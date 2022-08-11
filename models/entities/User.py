@@ -17,7 +17,7 @@ class User():
 
 class userJoin():
 
-    def __init__(self,id, fullName, document, email, role) -> None:
+    def __init__(self, id, fullName, document, email, role) -> None:
         self.id = id
         self.fullName = fullName
         self.document = document
@@ -26,9 +26,24 @@ class userJoin():
 
     def to_JSON(self):
         return {
-            'id':self.id,
+            'id': self.id,
             'fullName': self.fullName,
             'document': self.document,
             'email': self.email,
             'role': self.role
+        }
+
+
+class UserEdit():
+
+    def __init__(self, id, fullName, email) -> None:
+        self.id = id
+        self.fullName = fullName
+        self.email = email
+
+    def to_JSON(self):
+        return {
+            'id': self.id,
+            'fullname': self.fullName,
+            'email': self.email,
         }

@@ -46,6 +46,25 @@ def add_room():
         return jsonify(status=500, message=str(ex), method='add-room'), 500
 
 
+@main.route('/update-room/<roomCode>', methods=['POST'])
+def update_room(roomCode):
+    try:
+        name = request.json['name']
+        descriptionShort = request.json['descriptionShort']
+        descriptionLarge = request.json['descriptionLarge']
+        price = request.json['price']
+
+        affected_rows = RoomModel.update_room(name, descriptionShort, descriptionLarge, price, roomCode)
+
+        if affected_rows == 1:
+            return jsonify(status=200, data=roomCode, message='Updated room successfully'), 200
+        else:
+            return jsonify(status=500, message='Failed to update room', method='update-room'), 500
+
+    except Exception as ex:
+        return jsonify(status=500, message=str(ex), method='update-room'), 500
+
+
 @main.route('/add-images-room', methods=['POST'])
 def add_images_room():
     try:

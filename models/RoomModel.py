@@ -153,6 +153,22 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
+    def update_room(self, name, descriptionShort, descriptionLarge, price, roomCode):
+        try:
+            connection = get_connection()
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """UPDATE public.room SET name = %s, description_short = %s,
+                    description_large = %s, price = %s WHERE code=%s  """,
+                    (name, descriptionShort, descriptionLarge, price, roomCode))
+                affected_rows = cursor.rowcount
+                connection.commit()
+            connection.close()
+            return affected_rows
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def can_add_comment(self, userId, codeRoom):
         try:
             connection = get_connection()
