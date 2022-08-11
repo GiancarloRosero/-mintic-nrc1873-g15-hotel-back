@@ -46,6 +46,23 @@ class UserModel():
             raise Exception(ex)
 
     @classmethod
+    def delete_user(self, id):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """DELETE FROM public.user WHERE id = %s """,
+                    (id,))
+                affected_rows = cursor.rowcount
+                connection.commit()
+
+            connection.close()
+            return affected_rows
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def get_all_users_from_admin(self):
         try:
             connection = get_connection()
