@@ -89,9 +89,9 @@ def add_images_room():
 
         fileSaved = open(path.join(
             PATH_FILE_NEW, current_app.config['UPLOADED_FOLDER']+code+"/", file.filename), "rb")
-        img = fileSaved.read()
+        imageFile = fileSaved.read()
         
-        binary = psycopg2.Binary(img)
+        binary = psycopg2.Binary(imageFile)
 
         affected_rows = RoomModel.add_images(
             code, code + "/" + file.filename, file.mimetype, binary)
