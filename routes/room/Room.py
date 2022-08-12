@@ -1,6 +1,9 @@
-from flask import Blueprint, jsonify, request, send_from_directory, current_app
+from fileinput import filename
+from flask import Blueprint, jsonify, request, send_from_directory, current_app, send_file
 from os import path, makedirs
 import errno
+from io import BytesIO
+import psycopg2
 
 # Entities
 from models.entities.Room import Room
@@ -84,8 +87,14 @@ def add_images_room():
         file.save(path.join(
             PATH_FILE_NEW, current_app.config['UPLOADED_FOLDER']+code+"/", file.filename))
 
+        fileSaved = open(path.join(
+            PATH_FILE_NEW, current_app.config['UPLOADED_FOLDER']+code+"/", file.filename), "rb")
+        img = fileSaved.read()
+        
+        binary = psycopg2.Binary(img)
+
         affected_rows = RoomModel.add_images(
-            code, code + "/" + file.filename, file.mimetype)
+            code, code + "/" + file.filename, file.mimetype, binary)
 
         if affected_rows >= 1:
             return jsonify(status=200, data=path_save_image), 200
@@ -99,17 +108,18 @@ def add_images_room():
 
 
 @main.route('/get-all-images/files/<roomCode>', methods=['GET'])
-def get_all_names_images(roomCode):
-    urlImagesRoom = []
-    for path_img in RoomModel.get_all_names_images(roomCode):
-        urlImagesRoom.append(path_img[0])
+def get_all_ids_images(roomCode):
+    idImages = []
+    for path_img in RoomModel.get_all_ids_images(roomCode):
+        idImages.append(path_img[0])
 
-    return jsonify(status=200, message='Get url images success', data=urlImagesRoom), 200
+    return jsonify(status=200, message='Get url images success', data=idImages), 200
 
 
-@main.route('/get-image/<roomCode>/<image>', methods=['GET'])
-def get_all_images(roomCode, image):
-    return send_from_directory(PATH_FILE_NEW+"/"+current_app.config['UPLOADED_FOLDER'], path=roomCode + "/"+image, as_attachment=False)
+@main.route('/get-image/<id>', methods=['GET'])
+def get_all_images(id):
+    image = RoomModel.get_file_image(id)
+    return send_file(BytesIO(image[0]), mimetype=image[1], as_attachment=False)
 
 
 @main.route('/get-all-rooms', methods=['GET'])

@@ -25,7 +25,7 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
-    def add_images(self, code, path_save_image, mimetype):
+    def add_images(self, code, path_save_image, mimetype, file):
         try:
             connection = get_connection()
 
@@ -36,8 +36,8 @@ class RoomModel():
 
                 if result != None:
                     cursor.execute(
-                        """INSERT INTO public.images_room (room_id, url, mimetype)
-                    VALUES (%s, %s, %s)""", (result[0], path_save_image, mimetype,))
+                        """INSERT INTO public.images_room (room_id, url, mimetype, file)
+                    VALUES (%s, %s, %s, %s)""", (result[0], path_save_image, mimetype, file,))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -64,6 +64,39 @@ class RoomModel():
             raise Exception(ex)
 
     @classmethod
+    def get_all_ids_images(self, code):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT ir.id FROM public.room r
+                    JOIN public.images_room ir ON r.id = ir.room_id
+                    WHERE r.code = %s """, (code,))
+                result = cursor.fetchall()
+
+            connection.close()
+            return result
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_file_image(self, id):
+        try:
+            connection = get_connection()
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT file, mimetype FROM public.images_room ir
+                    WHERE ir.id = %s """, (id,))
+                result = cursor.fetchone()
+
+            connection.close()
+            return result
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
     def get_all_rooms(self):
         try:
             connection = get_connection()
@@ -71,7 +104,7 @@ class RoomModel():
             with connection.cursor() as cursor:
                 cursor.execute(
                     """SELECT DISTINCT ON (name) name, description_short, description_large,
-                    price, code, score, ir.url FROM public.room r JOIN public.images_room ir
+                    price, code, score, ir.id FROM public.room r JOIN public.images_room ir
                     ON ir.room_id = r.id """)
                 result = cursor.fetchall()
 
